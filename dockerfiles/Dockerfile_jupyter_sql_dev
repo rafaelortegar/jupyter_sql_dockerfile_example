@@ -1,0 +1,51 @@
+# Use Python 3.10 as the base image
+FROM python:3.10
+
+# Set environment variables
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+ENV POSTGRES_DB=practice_db
+ENV PGDATA=/var/lib/postgresql/data
+
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y postgresql postgresql-contrib && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN apt update && apt install -y nano
+
+# Modify PostgreSQL to use password authentication instead of peer
+RUN sed -i "s/peer/trust/" /etc/postgresql/15/main/pg_hba.conf && \
+    service postgresql start && \
+    sleep 5 && \
+    su postgres -c "psql -U postgres -c \"ALTER USER postgres PASSWORD 'postgres_pwd';\"" && \
+    service postgresql stop && \
+    sed -i "s/trust/md5/" /etc/postgresql/15/main/pg_hba.conf
+
+# Install Python dependencies
+RUN pip install --no-cache-dir \
+    jupyterlab \
+    psycopg2-binary \
+    sqlalchemy \
+    ipython-sql \
+    pandas
+
+# Expose PostgreSQL and Jupyter ports
+EXPOSE 5432 8888
+
+# Copy initialization SQL script and CSV files
+COPY init.sql /docker-entrypoint-initdb.d/init.sql
+COPY data/*.csv /workspace/data/
+
+# Create a working directory
+WORKDIR /workspace
+
+# Copy a script to process CSV files
+COPY import_csv.py /workspace/import_csv.py
+
+# Command to run PostgreSQL, import data, and Jupyter Notebook
+# CMD bash -c "service postgresql start && python /workspace/import_csv.py && jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root"
+CMD bash -c "service postgresql start && \
+             PGPASSWORD=postgres_pwd psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/init.sql && \
+             python /workspace/import_csv.py && \
+             jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root && bash"
