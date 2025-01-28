@@ -1,38 +1,34 @@
-# Python Cheat Sheets Book Repository
+# Pyspark SQL-Jupyter dockerfile example
 
-Welcome to the **Python Cheat Sheets Book** repository! This project is designed to help you build and serve Jupyter Books while working with Jupyter Notebooks, Docker, Poetry, Pyenv, Pre-Commit, and GitHub Actions. Follow this guide to set up and contribute to the project.
+Welcome to the **Pyspark SQL-Jupyter dockerfile example** repository! This repository provides a development environment for Python, Jupyter Notebook, and PostgreSQL. It includes a Dockerfile designed to streamline setting up a containerized environment for running data analysis workflows involving SQL and Python. Follow this guide to set up and contribute to the project.
 
 ---
 
 ## **Table of Contents**
 
-- [Python Cheat Sheets Book Repository](#python-cheat-sheets-book-repository)
+- [Pyspark SQL-Jupyter dockerfile example](#pyspark-sql-jupyter-dockerfile-example)
   - [**Table of Contents**](#table-of-contents)
   - [**Features**](#features)
   - [**Folder Structure**](#folder-structure)
-  - [**Initial Setup**](#initial-setup)
-    - [**On Linux**](#on-linux)
-    - [**On Windows**](#on-windows)
+  - [Folders and Files Needed for the Dockerfile](#folders-and-files-needed-for-the-dockerfile)
+  - [Initial Setup](#initial-setup)
+    - [Ubuntu](#ubuntu)
+    - [Windows](#windows)
   - [**Using This Repo**](#using-this-repo)
     - [**Run with Docker**](#run-with-docker)
-    - [**Run Locally with Poetry**](#run-locally-with-poetry)
-    - [**Run Tests**](#run-tests)
-  - [**Updating a Package**](#updating-a-package)
+  - [Setting Up Things](#setting-up-things)
+  - [How to Run the Code](#how-to-run-the-code)
   - [**Contributing**](#contributing)
-  - [**GitHub Actions**](#github-actions)
 
 ---
 
 ## **Features**
 
-- **Docker**: Containerized environment for consistent development.
-- **Poetry**: Dependency and environment management.
-- **Jupyter Book**: Generate structured documentation from notebooks and markdown files.
-- **Jupyter Notebooks**: Interactive notebooks for development and analysis.
-- **Pre-Commit Hooks**: Ensure code quality and consistency.
-- **Pyenv**: Manage Python versions.
-- **GitHub Actions**: Automated workflows for linting, testing, and book building.
-- **Tests**: Unit tests to validate the functionality of scripts.
+- Python 3.10 as the base programming environment.
+- PostgreSQL 15 with user authentication and a pre-loaded database schema.
+- JupyterLab for interactive data analysis.
+- Pre-installed Python libraries for SQLAlchemy, Pandas, and more.
+- Automated setup for importing initial CSV data into PostgreSQL.
 
 ---
 
@@ -40,94 +36,53 @@ Welcome to the **Python Cheat Sheets Book** repository! This project is designed
 
 ```plaintext
 .
-├── LICENSE                  # License file for the project
-├── README.md                # Main documentation for the repository
-├── README_1.md              # Additional or alternate README
-├── book                     # Jupyter Book content
-│   ├── _build               # Built files for the Jupyter Book
-│   │   ├── html             # HTML output
-│   │   └── jupyter_execute  # Executed notebooks
-│   ├── _config.yml          # Global configuration for the Jupyter Book
-│   ├── _toc.yml             # Table of contents for the Jupyter Book
-│   ├── intro.md             # Introduction chapter
-│   ├── logo.png             # Logo for the book
-│   ├── markdown-notebooks.md  # Example Markdown documentation
-│   ├── markdown.md          # Example Markdown file
-│   ├── notebooks.ipynb      # Example Jupyter Notebook
-│   ├── references.bib       # References used in the book
-│   └── requirements.txt     # Dependencies for the Jupyter Book
-├── cheat_sheets_book        # Main source code for the cheat sheets book
-├── dockerfiles              # Docker configurations
-│   └── Dockerfile_jupyter_book_dev  # Dockerfile for the development environment
-├── notebooks                # Additional Jupyter Notebooks
-├── poetry.lock              # Poetry lock file for dependencies
-├── pyproject.toml           # Poetry configuration file
-├── pytest.ini               # Configuration for pytest
-├── requirements.txt         # Dependencies for non-Poetry users
-└── tests                    # Unit tests for the project
-    └── test_example.py      # Example test case
+├── LICENSE                     # License information
+├── README.md                   # Documentation for the repository
+├── README_old.md               # Old version of the documentation
+├── data                        # Folder containing sample CSV files for import
+│   ├── amazon.csv              # Example dataset
+│   └── enhanced_box_office_data_20_24u.csv  # Additional dataset
+├── data_readme.md              # Details about the datasets in the `data` folder
+├── dockerfiles                 # Folder containing Dockerfiles
+│   └── Dockerfile_jupyter_sql_dev  # Dockerfile for setting up the environment
+├── import_csv.py               # Script to automate importing CSV data into PostgreSQL
+├── init.sql                    # SQL script for initializing the PostgreSQL database
+└── notebooks                   # Jupyter Notebooks for running SQL queries
+    ├── csv_to_postgres.ipynb   # Notebook demonstrating CSV import to PostgreSQL
+    └── running_queries.ipynb  # Notebook for executing SQL queries
 ```
+
+## Folders and Files Needed for the Dockerfile
+
+- `dockerfiles/Dockerfile_jupyter_sql_dev`: Defines the Docker image setup.
+- `init.sql`: Contains the schema and initial setup for PostgreSQL.
+- `data/*.csv`: CSV files for populating the database.
+- `import_csv.py`: Script for automating CSV imports into PostgreSQL.
 
 ---
 
-## **Initial Setup**
+## Initial Setup
 
-### **On Linux**
+### Ubuntu
 
-1. **Install Pyenv**:
+1. Install Docker:
    ```bash
-   curl https://pyenv.run | bash
-   export PYENV_ROOT="$HOME/.pyenv"
-   export PATH="$PYENV_ROOT/bin:$PATH"
-   eval "$(pyenv init --path)"
-   eval "$(pyenv virtualenv-init -)"
-   exec $SHELL
+   sudo apt update
+   sudo apt install -y docker.io docker-compose
    ```
-
-2. **Install Python**:
+2. Start Docker:
    ```bash
-   pyenv install 3.10.12
-   pyenv virtualenv 3.10.12 python_cheat_sheets_book
-   pyenv activate python_cheat_sheets_book
+   sudo systemctl start docker
+   sudo systemctl enable docker
    ```
 
-3. **Install Poetry**:
+### Windows
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+2. Ensure Docker Desktop is running and WSL2 backend is enabled.
+3. Clone this repository:
    ```bash
-   curl -sSL https://install.python-poetry.org | python3 -
-   export PATH="$HOME/.local/bin:$PATH"
-   exec $SHELL
-   ```
-
-4. **Install Dependencies**:
-   ```bash
-   poetry install
-   ```
-
-### **On Windows**
-
-1. **Install Pyenv-Win**:
-   ```powershell
-   pip install pyenv-win
-   ```
-   Add the following to your system PATH:
-   - `%USERPROFILE%\.pyenv\pyenv-win\bin`
-   - `%USERPROFILE%\.pyenv\pyenv-win\shims`
-
-2. **Install Python**:
-   ```powershell
-   pyenv install 3.10.12
-   pyenv virtualenv 3.10.12 python_cheat_sheets_book
-   pyenv activate python_cheat_sheets_book
-   ```
-
-3. **Install Poetry**:
-   ```powershell
-   (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
-   ```
-
-4. **Install Dependencies**:
-   ```powershell
-   poetry install
+   git clone https://github.com/rafaelortegar/pyspark_sql_dockerfile_example.git
    ```
 
 ---
@@ -136,92 +91,218 @@ Welcome to the **Python Cheat Sheets Book** repository! This project is designed
 
 ### **Run with Docker**
 
-1. **Build the Docker Image**:
+1. **Navigate to the root directory:**
    ```bash
-   docker build -t jupyter-book-dev -f dockerfiles/Dockerfile_jupyter_book_dev .
+   cd pyspark_sql_dockerfile_example
    ```
 
-2. **Run the Container**:
+2. **Build the Docker Image**:
+
    ```bash
-   docker run -it -p 8888:8888 -p 8000:8000 -v $(pwd):/notebooks jupyter-book-dev
+   docker build --no-cache -f dockerfiles/Dockerfile_jupyter_sql_dev -t jupyter_sql_pyspark .
+   ```
+3. **Run the Container**:
+
+   ```bash
+   docker run -it -p 8888:8888 -p 5432:5432 -v $(pwd):/workspace jupyter_sql_pyspark /bin/bash
    ```
 
-3. **Access the Services**:
+4. **Check postgres is running**:
+
+   ```bash
+   service postgresql status
+   ```
+
+5. **Start Postgres**:
+
+   ```bash
+   service postgresql start
+   ```
+
+6. **Run SQL init script**:
+
+   ```bash
+   PGPASSWORD=postgres_pwd psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/init.sql
+   ```
+
+7. **Run sql tables creation with python**:
+
+   ```bash
+   python import_csv.py
+   ```
+
+8. **Connect to postgress to check for tables creation**:
+
+   ```bash
+   PGPASSWORD=postgres_pwd psql -U postgres -d practice_db
+   ```
+
+9. **Check tables creation**:
+
+   ```bash
+   \dt
+   ```
+
+10. **Exit postgres**:
+
+   ```bash
+   exit
+   ```
+
+11. **Run Jupyter lab**:
+
+   ```bash
+   jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+   ```
+
+5. **Access the Services**:
+
    - Jupyter Notebook: [http://localhost:8888](http://localhost:8888)
    - Jupyter Book: [http://localhost:8000](http://localhost:8000)
 
-### **Run Locally with Poetry**
-
-1. Activate the environment:
-   ```bash
-   poetry shell
-   ```
-
-2. Run Jupyter Notebook:
-   ```bash
-   jupyter notebook
-   ```
-
-3. Build the Jupyter Book:
-   ```bash
-   jupyter-book build book/
-   ```
-
-### **Run Tests**
-
-1. Execute all tests:
-   ```bash
-   pytest
-   ```
 
 ---
 
-## **Updating a Package**
+## Setting Up Things
 
-1. **Update the Dependency**:
-   ```bash
-   poetry add <package>@<version>
-   ```
+- The `Dockerfile` installs PostgreSQL, JupyterLab, and required Python libraries.
+- It sets up PostgreSQL for password authentication and pre-loads the database using `init.sql`.
+- The `import_csv.py` script imports CSV files from the `data` folder into the PostgreSQL database.
 
-2. **Rebuild the Docker Image**:
-   ```bash
-   docker build -t jupyter-book-dev -f dockerfiles/Dockerfile_jupyter_book_dev .
-   ```
+---
 
-3. **Run the Updated Container**:
+## How to Run the Code
+
+1. Start the container:
    ```bash
-   docker run -it -p 8888:8888 -p 8000:8000 -v $(pwd):/notebooks jupyter-book-dev
+   docker start python_sql_dev
    ```
+2. Access JupyterLab:
+   - Open your browser and navigate to `http://localhost:8888`.
+   - Use the token displayed in the terminal to log in.
+3. Run Jupyter Notebooks from the `notebooks` folder to execute SQL queries and analyze data.
 
 ---
 
 ## **Contributing**
 
+Contributions are welcome! Follow these steps:
+
 1. **Fork the Repo**: Clone your fork locally.
-2. **Install Pre-Commit Hooks**:
-   ```bash
-   pre-commit install
-   ```
-3. **Create a Feature Branch**:
+
+2. **Create a Feature Branch**:
+
    ```bash
    git checkout -b feature/<feature-name>
    ```
-4. **Make Changes**: Commit with meaningful messages.
-5. **Run Tests**:
+
+3. **Make Changes**: Commit with meaningful messages.
+
+4. **Commit your changes and push**:
+
    ```bash
-   pytest
+   git add .
+   git commit -m "Your commit message"
+   git push origin feature-branch-name
    ```
-6. **Push and Create a Pull Request**.
 
----
-
-## **GitHub Actions**
-
-This repository includes workflows for:
-- **Linting**: Ensures code quality with tools like Black and Flake8.
-- **Testing**: Runs unit tests automatically.
-- **Book Building**: Builds and deploys the Jupyter Book to GitHub Pages.
+5. **Create a Pull Request**.
 
 ---
 
 If you encounter any issues or have questions, feel free to open an issue or contribute to the project!
+
+<!-- # Actual commands:
+
+docker build --no-cache -f dockerfiles/Dockerfile_jupyter_sql_dev -t jupyter_sql_pyspark .
+
+docker run -it -p 8888:8888 -p 5432:5432 -v $(pwd):/workspace jupyter_sql_pyspark /bin/bash
+
+service postgresql status
+service postgresql start
+
+PGPASSWORD=postgres_pwd psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/init.sql
+
+python import_csv.py
+
+PGPASSWORD=postgres_pwd psql -U postgres -d practice_db
+
+\dt
+
+exit
+
+jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root -->
+
+---
+
+<!-- PGPASSWORD=postgres_pwd psql -U postgres
+
+psql -U postgres -d practice_db -h localhost
+
+psql -U postgres
+
+Password for user postgres: postgres_pwd
+
+postgres=# CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50),
+    email VARCHAR(100)
+);
+CREATE TABLE
+postgres=# \dt
+         List of relations
+ Schema | Name  | Type  |  Owner
+--------+-------+-------+----------
+ public | users | table | postgres
+(1 row)
+
+postgres=# INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com');
+INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com');
+INSERT 0 1
+INSERT 0 1
+postgres=# SELECT * FROM users;
+ id | name  |       email
+----+-------+-------------------
+  1 | Alice | alice@example.com
+  2 | Bob   | bob@example.com
+(2 rows)
+
+postgres=#
+
+\q
+
+jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+
+oot@a1d2a1ddd942:/workspace# service postgresql status
+15/main (port 5432): online
+root@a1d2a1ddd942:/workspace# PGPASSWORD=postgres_pwd psql -U postgres
+psql (15.10 (Debian 15.10-0+deb12u1))
+Type "help" for help.
+
+postgres=# \l
+                                             List of databases
+   Name    |  Owner   | Encoding | Collate |  Ctype  | ICU Locale | Locale Provider |   Acces
+s privileges
+-----------+----------+----------+---------+---------+------------+-----------------+--------
+---------------------------------------------------------------------------------------------
+
+ postgres  | postgres | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            |
+ template0 | postgres | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | =c/post
+gres          +
+           |          |          |         |         |            |                 | postgre
+s=CTc/postgres
+ template1 | postgres | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | =c/post
+gres          +
+           |          |          |         |         |            |                 | postgre
+s=CTc/postgres
+(3 rows)
+
+postgres=# CREATE DATABASE practice_db;
+CREATE DATABASE
+postgres=# \q
+root@a1d2a1ddd942:/workspace#
+
+PGPASSWORD=postgres_pwd psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/init.sql
+
+python import_csv.py -->
