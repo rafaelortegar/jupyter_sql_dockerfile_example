@@ -122,7 +122,7 @@ Welcome to the **Pyspark SQL-Jupyter dockerfile example** repository! This repos
 6. **Run SQL init script**:
 
    ```bash
-   PGPASSWORD=postgres_pwd psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/init.sql
+   PGPASSWORD=postgres psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/init.sql
    ```
 
 7. **Run sql tables creation with python**:
@@ -134,7 +134,7 @@ Welcome to the **Pyspark SQL-Jupyter dockerfile example** repository! This repos
 8. **Connect to postgress to check for tables creation**:
 
    ```bash
-   PGPASSWORD=postgres_pwd psql -U postgres -d practice_db
+   PGPASSWORD=postgres psql -U postgres -d practice_db
    ```
 
 9. **Check tables creation**:
