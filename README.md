@@ -2,6 +2,8 @@
 
 Welcome to the **Pyspark SQL-Jupyter dockerfile example** repository! This repository provides a development environment for Python, Jupyter Notebook, and PostgreSQL. It includes a Dockerfile designed to streamline setting up a containerized environment for running data analysis workflows involving SQL and Python. Follow this guide to set up and contribute to the project.
 
+The purpose of this repository is to provide a Jupyter notebook environment for practicing SQL skills. You can write SQL queries, execute them, and view the results directly within the notebook. This is intended for learning and practice, not for production use.
+
 ---
 
 ## **Table of Contents**
@@ -12,10 +14,12 @@ Welcome to the **Pyspark SQL-Jupyter dockerfile example** repository! This repos
   - [**Folder Structure**](#folder-structure)
   - [Folders and Files Needed for the Dockerfile](#folders-and-files-needed-for-the-dockerfile)
   - [Initial Setup](#initial-setup)
+    - [First things first:](#first-things-first)
     - [Ubuntu](#ubuntu)
     - [Windows](#windows)
   - [**Using This Repo**](#using-this-repo)
     - [**Run with Docker**](#run-with-docker)
+  - [Please notice that the init script will look for all available csv's in data folder and will create the entire database again.](#please-notice-that-the-init-script-will-look-for-all-available-csvs-in-data-folder-and-will-create-the-entire-database-again)
   - [Setting Up Things](#setting-up-things)
   - [How to Run the Code](#how-to-run-the-code)
   - [**Contributing**](#contributing)
@@ -62,6 +66,10 @@ Welcome to the **Pyspark SQL-Jupyter dockerfile example** repository! This repos
 ---
 
 ## Initial Setup
+### First things first:
+1. Download this repo
+2. add your csv files into data folder
+
 
 ### Ubuntu
 
@@ -99,68 +107,40 @@ Welcome to the **Pyspark SQL-Jupyter dockerfile example** repository! This repos
 2. **Build the Docker Image**:
 
    ```bash
-   docker build --no-cache -f dockerfiles/Dockerfile_jupyter_sql_dev -t jupyter_sql_pyspark .
+   docker build --no-cache -f dockerfiles/Dockerfile_jupyter_sql_dev -t jupyter_sql_dev .
    ```
 3. **Run the Container**:
 
    ```bash
-   docker run -it -p 8888:8888 -p 5432:5432 -v $(pwd):/workspace jupyter_sql_pyspark /bin/bash
+   docker run -it -p 8888:8888 -p 5432:5432 -v $(pwd):/workspace jupyter_sql_dev /bin/bash
    ```
 
-4. **Check postgres is running**:
+4. **Run init script**:
 
    ```bash
-   service postgresql status
+   bash setup_postgres.sh
    ```
 
-5. **Start Postgres**:
-
-   ```bash
-   service postgresql start
-   ```
-
-6. **Run SQL init script**:
-
-   ```bash
-   PGPASSWORD=postgres psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/init.sql
-   ```
-
-7. **Run sql tables creation with python**:
-
-   ```bash
-   python import_csv.py
-   ```
-
-8. **Connect to postgress to check for tables creation**:
-
-   ```bash
-   PGPASSWORD=postgres psql -U postgres -d practice_db
-   ```
-
-9. **Check tables creation**:
-
-   ```bash
-   \dt
-   ```
-
-10. **Exit postgres**:
-
-   ```bash
-   exit
-   ```
-
-11. **Run Jupyter lab**:
+5.  **Run Jupyter lab**:
 
    ```bash
    jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
    ```
 
-5. **Access the Services**:
+6. **Access the Services**:
 
    - Jupyter Notebook: [http://localhost:8888](http://localhost:8888)
    - Jupyter Book: [http://localhost:8000](http://localhost:8000)
 
+In case you want to change or add a new csv file, just th init script agains:
 
+1. **Run init script again**:
+
+   ```bash
+   bash setup_postgres.sh
+   ```
+
+Please notice that the init script will look for all available csv's in data folder and will create the entire database again.
 ---
 
 ## Setting Up Things
@@ -168,19 +148,35 @@ Welcome to the **Pyspark SQL-Jupyter dockerfile example** repository! This repos
 - The `Dockerfile` installs PostgreSQL, JupyterLab, and required Python libraries.
 - It sets up PostgreSQL for password authentication and pre-loads the database using `init.sql`.
 - The `import_csv.py` script imports CSV files from the `data` folder into the PostgreSQL database.
+- The `setup_postgres.sh` file will re create the entire database by running the `init.sql` and the `import_csv.py` files.
 
 ---
 
 ## How to Run the Code
 
 1. Start the container:
+
    ```bash
-   docker start python_sql_dev
+   docker run -it -p 8888:8888 -p 5432:5432 -v $(pwd):/workspace jupyter_sql_dev /bin/bash
    ```
-2. Access JupyterLab:
+
+2.  **Run Jupyter lab**:
+
+   ```bash
+   jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+   ```
+
+3. **Run init script**:
+
+   ```bash
+   bash setup_postgres.sh
+   ```
+
+4. Access JupyterLab:
    - Open your browser and navigate to `http://localhost:8888`.
    - Use the token displayed in the terminal to log in.
-3. Run Jupyter Notebooks from the `notebooks` folder to execute SQL queries and analyze data.
+
+5. Run Jupyter Notebooks from the `notebooks` folder to execute SQL queries and analyze data. (You can see an example in the notebooks folder)
 
 ---
 
