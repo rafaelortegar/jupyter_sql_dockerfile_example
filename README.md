@@ -19,7 +19,6 @@ The purpose of this repository is to provide a Jupyter notebook environment for 
     - [Windows](#windows)
   - [**Using This Repo**](#using-this-repo)
     - [**Run with Docker**](#run-with-docker)
-  - [Please notice that the init script will look for all available csv's in data folder and will create the entire database again.](#please-notice-that-the-init-script-will-look-for-all-available-csvs-in-data-folder-and-will-create-the-entire-database-again)
   - [Setting Up Things](#setting-up-things)
   - [How to Run the Code](#how-to-run-the-code)
   - [**Contributing**](#contributing)
@@ -132,7 +131,7 @@ The purpose of this repository is to provide a Jupyter notebook environment for 
    - Jupyter Notebook: [http://localhost:8888](http://localhost:8888)
    - Jupyter Book: [http://localhost:8000](http://localhost:8000)
 
-In case you want to change or add a new csv file, just th init script agains:
+In case you want to change or add a new csv file, just the init script again:
 
 1. **Run init script again**:
 
@@ -141,6 +140,7 @@ In case you want to change or add a new csv file, just th init script agains:
    ```
 
 Please notice that the init script will look for all available csv's in data folder and will create the entire database again.
+
 ---
 
 ## Setting Up Things
@@ -206,7 +206,7 @@ Contributions are welcome! Follow these steps:
 
 ---
 
-If you encounter any issues or have questions, feel free to open an issue or contribute to the project!
+If you encounter any issues (🐞) or have questions, feel free to open an issue or contribute to the project 🤝!
 
 <!-- # Actual commands:
 
