@@ -1,6 +1,6 @@
-# Pyspark SQL-Jupyter dockerfile example
+# SQL-Jupyter dockerfile example
 
-Welcome to the **Pyspark SQL-Jupyter dockerfile example** repository! This repository provides a development environment for Python, Jupyter Notebook, and PostgreSQL. It includes a Dockerfile designed to streamline setting up a containerized environment for running data analysis workflows involving SQL and Python. Follow this guide to set up and contribute to the project.
+Welcome to the **SQL-Jupyter dockerfile example** repository! This repository provides a development environment for Python, Jupyter Notebook, and PostgreSQL. It includes a Dockerfile designed to streamline setting up a containerized environment for running data analysis workflows involving SQL and Python. Follow this guide to set up and contribute to the project.
 
 The purpose of this repository is to provide a Jupyter notebook environment for practicing SQL skills. You can write SQL queries, execute them, and view the results directly within the notebook. This is intended for learning and practice, not for production use.
 
@@ -8,7 +8,7 @@ The purpose of this repository is to provide a Jupyter notebook environment for 
 
 ## **Table of Contents**
 
-- [Pyspark SQL-Jupyter dockerfile example](#pyspark-sql-jupyter-dockerfile-example)
+- [SQL-Jupyter dockerfile example](#sql-jupyter-dockerfile-example)
   - [**Table of Contents**](#table-of-contents)
   - [**Features**](#features)
   - [**Folder Structure**](#folder-structure)
